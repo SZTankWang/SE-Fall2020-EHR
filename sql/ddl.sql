@@ -4,18 +4,18 @@ create table hospital (
 	name varchar(100) NOT NULL,
 	phone varchar(20),
 	address text NOT NULL,
-	description longtext,
+	description text,
 	primary key (id)
 );
 
 #Department
 create table department (
-	id varchar(20) NOT NULL,
+	id varchar(20),
 	hospital_id varchar(20),
 	name varchar(100) NOT NULL,
 	phone varchar(20),
 	address text,
-	description longtext,
+	description text,
 	primary key (id),
 	foreign key (hospital_id) REFERENCES hospital(id) 
 	ON UPDATE CASCADE ON DELETE CASCADE	
@@ -25,16 +25,13 @@ create table department (
 create table doctor (
 	id varchar(20),
 	department_id varchar(20),
-	hospital_id varchar(20),
-	password text NOT NULL,
+	password varchar(100) NOT NULL,
 	name varchar(100) NOT NULL,
 	email varchar(100) UNIQUE NOT NULL,
 	phone varchar(20),
 	address text,
 	primary key (id),
 	foreign key (department_id) REFERENCES department(id)
-	ON UPDATE CASCADE ON DELETE SET NULL,
-	foreign key (hospital_id) REFERENCES hospital(id) 
 	ON UPDATE CASCADE ON DELETE SET NULL
 );
 
@@ -42,23 +39,20 @@ create table doctor (
 create table nurse (
 	id varchar(20),
 	department_id varchar(20),
-	hospital_id varchar(20),
-	password text NOT NULL,
+	password varchar(100) NOT NULL,
 	name varchar(100) NOT NULL,
 	email varchar(100) UNIQUE NOT NULL,
 	phone varchar(20),
 	address text,
 	primary key (id),
 	foreign key (department_id) REFERENCES department(id)
-	ON UPDATE CASCADE ON DELETE SET NULL,
-	foreign key (hospital_id) REFERENCES hospital(id) 
 	ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 #Patient
 create table patient (
 	id varchar(20),
-	password text NOT NULL,
+	password varchar(100) NOT NULL,
 	name varchar(100) NOT NULL,
 	email varchar(100) UNIQUE NOT NULL,
 	phone varchar(20),
@@ -73,7 +67,7 @@ create table patient (
 #Time slot
 create table time_slot (
 	id varchar(20),
-	doctor_id varchar(20),
+	doctor_id varchar(20) NOT NULL,
 	slot_date date NOT NULL,
 	slot_time time NOT NULL,
 	n_total int NOT NULL,
@@ -95,6 +89,7 @@ create table application (
 	reject_reason text,
 	primary key (id),
 	foreign key (time_slot_id) references time_slot(id),
+	#??????
 	foreign key (doctor_id) references doctor(id),
 	foreign key (approver_id) references nurse(id),
 	foreign key (patient_id) references patient(id)
@@ -111,7 +106,6 @@ create table medical_record (
 	heart_rate int,
 	weight float(1),
 	state enum('conscious', 'coma') DEFAULT 'conscious',
-	report_id varchar(20),
 	primary key (id),
 	foreign key (patient_id) references patient(id),
 	foreign key (appt_id) references application(id),
@@ -124,7 +118,7 @@ create table prescription (
 	mc_id varchar(20),
 	medicine text,
 	dose text,
-	comment text,
+	comments text,
 	primary key (id),
 	foreign key (mc_id) references medical_record(id)
 );
@@ -132,7 +126,7 @@ create table prescription (
 #Lab report type
 create table lab_report_type (
 	type varchar(50),
-	description longtext,
+	description text,
 	primary key (type)
 );
 
@@ -144,7 +138,7 @@ create table lab_report (
 	uploader_id varchar(20),
 	patient_id varchar(20),
 	file longblob,
-	comments longtext,
+	comments text,
 	primary key (id),
 	foreign key (type) REFERENCES lab_report_type(type)
 	ON UPDATE CASCADE,
